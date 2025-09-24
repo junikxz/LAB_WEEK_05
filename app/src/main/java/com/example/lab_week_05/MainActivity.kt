@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://api.thecatapi.com/v1/")
-            .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
+            .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create()) // ✅ pakai Gson
             .build()
     }
 
@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun getCatImageResponse() {
         val call = catApiService.searchImages(1, "full")
-
         call.enqueue(object : Callback<List<ImageData>> {
             override fun onFailure(call: Call<List<ImageData>>, t: Throwable) {
                 Log.e(MAIN_ACTIVITY, "Failed to get response", t)
@@ -59,18 +58,22 @@ class MainActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     val imageList = response.body()
-                    val firstImage = imageList?.firstOrNull()?.imageUrl.orEmpty()
+                    val firstImage = imageList?.firstOrNull()
 
-                    if (firstImage.isNotBlank()) {
-                        imageLoader.loadImage(firstImage, imageResultView)
+                    val imageUrl = firstImage?.imageUrl.orEmpty()
+                    val breedName = if (!firstImage?.breeds.isNullOrEmpty()) {
+                        firstImage?.breeds?.firstOrNull()?.name ?: "Unknown"
+                    } else {
+                        "Unknown"
+                    }
+
+                    apiResponseView.text = "Cat Breed: $breedName"
+
+                    if (imageUrl.isNotBlank()) {
+                        imageLoader.loadImage(imageUrl, imageResultView)
                     } else {
                         Log.d(MAIN_ACTIVITY, "Missing image URL")
                     }
-
-                    apiResponseView.text = getString(
-                        R.string.image_placeholder,
-                        firstImage
-                    )
                 } else {
                     Log.e(
                         MAIN_ACTIVITY,
