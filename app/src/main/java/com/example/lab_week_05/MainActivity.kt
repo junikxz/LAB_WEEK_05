@@ -9,20 +9,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.lab_week_05.api.CatApiService
-import com.example.lab_week_05.model.GlideLoader
-import com.example.lab_week_05.model.ImageData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class MainActivity : AppCompatActivity() {
-    private val retrofit by lazy{
+    private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://api.thecatapi.com/v1/")
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
             .build()
     }
 
@@ -34,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         findViewById(R.id.api_response)
     }
 
-    private val imageResultView : ImageView by lazy{
+    private val imageResultView: ImageView by lazy {
         findViewById(R.id.image_result)
     }
 
@@ -83,6 +80,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
+
 
     companion object{
         const val MAIN_ACTIVITY = "MAIN_ACTIVITY"
